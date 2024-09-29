@@ -22,6 +22,8 @@
         @apply bg-white;
         @apply text-gray-900;
         @apply leading-snug;
-        @apply font-rubik;
+        @apply font-poppins;
+        width: 100%;
+        min-height: 100vh;
     }
 }

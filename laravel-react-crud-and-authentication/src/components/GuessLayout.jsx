@@ -8,9 +8,10 @@ export default function GuessLayout() {
     if (token) {
         return <Navigate to="/" />;
     }
+
     return (
-        <div className="w-full">
-            <div className="w-full ">
+        <div className="w-full h-screen">
+            <div className="w-full h-full">
                 <div className="">Guess</div>
                 <Outlet />
             </div>
