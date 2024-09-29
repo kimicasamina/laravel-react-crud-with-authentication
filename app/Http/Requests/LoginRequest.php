@@ -22,21 +22,24 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|email',
-            'password' => 'required'
+            'email' => 'required|email|string|exists:users,email',
+            'password' => [
+                'required',
+            ],
+            'remember' => 'boolean'
         ];
     }
 
-    /**
-     * Custom message for validation
-     *
-     * @return array
-     */
-    public function messages()
-    {
-        return [
-            'email.required' => 'Email is required!',
-            'password.required' => 'Password is required!'
-        ];
-    }
+    // /**
+    //  * Custom message for validation
+    //  *
+    //  * @return array
+    //  */
+    // public function messages()
+    // {
+    //     return [
+    //         'email.required' => 'Email is required!',
+    //         'password.required' => 'Password is required!'
+    //     ];
+    // }
 }
