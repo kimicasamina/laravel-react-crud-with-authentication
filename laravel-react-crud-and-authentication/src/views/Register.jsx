@@ -1,7 +1,10 @@
 import React, { useRef } from "react";
 import { Link } from "react-router-dom";
+import { axiosClient } from "../axiosClient";
+import { useStateContext } from "../context/contextProvider";
 
 export default function Register() {
+    const { setUser, setToken } = useStateContext();
     const nameRef = useRef();
     const emailRef = useRef();
     const passwordRef = useRef();
@@ -15,6 +18,26 @@ export default function Register() {
             password: passwordRef.current.value,
         };
         console.log("Payload:", payload);
+
+        try {
+            const { data } = await axiosClient.post("register", payload);
+            console.log("Response: ", data);
+            setUser(data.user);
+            setToken(data.token);
+        } catch (error) {
+            console.log(error);
+        }
+
+        // axiosClient.post("register", payload).then(({ data }) => {
+        //     console.log("Response: ", data);
+        //     setUser(data.user);
+        //     setToken(data.token);
+        // }).catch(err => {
+        //     const response = err.response;
+        //     if(response && response.status === 401){
+
+        //     }
+        // })
     }
 
     return (
