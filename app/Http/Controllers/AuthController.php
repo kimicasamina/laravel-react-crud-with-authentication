@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -9,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
         $data = $request->validated();
 
@@ -29,7 +31,7 @@ class AuthController extends Controller
         ]);
     }
 
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
 
         // retrieve validated data

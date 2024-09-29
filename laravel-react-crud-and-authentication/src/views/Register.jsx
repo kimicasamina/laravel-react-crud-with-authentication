@@ -1,13 +1,15 @@
-import React, { useRef } from "react";
-import { Link } from "react-router-dom";
-import { axiosClient } from "../axiosClient";
+import React, { useRef, useState } from "react";
+import { Link, Navigate } from "react-router-dom";
+import axiosClient from "../axiosClient";
 import { useStateContext } from "../context/contextProvider";
 
 export default function Register() {
     const { setUser, setToken } = useStateContext();
+    const [errors, setErrors] = useState(null);
     const nameRef = useRef();
     const emailRef = useRef();
     const passwordRef = useRef();
+    const passwordConfirmationRef = useRef();
 
     async function Submit(e) {
         e.preventDefault();
@@ -16,28 +18,25 @@ export default function Register() {
             name: nameRef.current.value,
             email: emailRef.current.value,
             password: passwordRef.current.value,
+            password_confirmation: passwordConfirmationRef.current.value,
         };
         console.log("Payload:", payload);
 
-        try {
-            const { data } = await axiosClient.post("register", payload);
-            console.log("Response: ", data);
-            setUser(data.user);
-            setToken(data.token);
-        } catch (error) {
-            console.log(error);
-        }
-
-        // axiosClient.post("register", payload).then(({ data }) => {
-        //     console.log("Response: ", data);
-        //     setUser(data.user);
-        //     setToken(data.token);
-        // }).catch(err => {
-        //     const response = err.response;
-        //     if(response && response.status === 401){
-
-        //     }
-        // })
+        axiosClient
+            .post("/register", payload)
+            .then(({ data }) => {
+                console.log("DATA: ", data);
+                setUser(data.user);
+                setToken(data.token);
+                return <Navigate to="/" />;
+            })
+            .catch((err) => {
+                const response = err.response;
+                console.log("RESPONSE: ", response);
+                if (response && response.status === 422) {
+                    setErrors(response.data.errors);
+                }
+            });
     }
 
     return (
@@ -48,23 +47,70 @@ export default function Register() {
                 </h1>
                 <form className="flex flex-col gap-y-4" onSubmit={Submit}>
                     <input
-                        type="text"
+                        className="border rounded-sm p-2 outline-purple-600 text-purple-600"
                         ref={nameRef}
-                        className="border rounded-sm p-2 outline-purple-600 text-purple-600"
-                        placeholder="Enter your name"
-                    />
-                    <input
                         type="text"
-                        ref={emailRef}
-                        className="border rounded-sm p-2 outline-purple-600 text-purple-600"
-                        placeholder="Enter your email"
+                        placeholder="Full Name"
                     />
+                    {errors && errors.name
+                        ? errors.name.map((err, index) => (
+                              <small
+                                  key={index}
+                                  className="text-sm text-red-400"
+                              >
+                                  {err}
+                              </small>
+                          ))
+                        : null}
                     <input
-                        type="password"
-                        ref={passwordRef}
                         className="border rounded-sm p-2 outline-purple-600 text-purple-600"
-                        placeholder="Enter your password"
+                        ref={emailRef}
+                        type="email"
+                        placeholder="Email Address"
                     />
+                    {errors && errors.email
+                        ? errors.email.map((err, index) => (
+                              <small
+                                  key={index}
+                                  className="text-sm text-red-400"
+                              >
+                                  {err}
+                              </small>
+                          ))
+                        : null}
+                    <input
+                        className="border rounded-sm p-2 outline-purple-600 text-purple-600"
+                        ref={passwordRef}
+                        type="password"
+                        placeholder="Password"
+                    />
+                    {errors && errors.password
+                        ? errors.password.map((err, index) => (
+                              <small
+                                  key={index}
+                                  className="text-sm text-red-400"
+                              >
+                                  {err}
+                              </small>
+                          ))
+                        : null}
+                    <input
+                        className="border rounded-sm p-2 outline-purple-600 text-purple-600"
+                        ref={passwordConfirmationRef}
+                        type="password"
+                        placeholder="Repeat Password"
+                    />
+                    {errors && errors.password_confirmation
+                        ? errors.password_confirmation.map((err, index) => (
+                              <small
+                                  key={index}
+                                  className="text-sm text-red-400"
+                              >
+                                  {err}
+                              </small>
+                          ))
+                        : null}
+
                     <div className="flex flex-col gap-y-4 mt-4">
                         <button
                             type="submit"
