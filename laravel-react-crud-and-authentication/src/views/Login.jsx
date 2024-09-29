@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import axiosClient from "../axiosClient";
 import { useStateContext } from "../context/contextProvider";
 
@@ -22,6 +22,7 @@ export default function Login() {
                 console.log("DATA: ", data);
                 setUser(data.user);
                 setToken(data.token);
+                return <Navigate to="/" />;
             })
             .catch((err) => {
                 const response = err.response;

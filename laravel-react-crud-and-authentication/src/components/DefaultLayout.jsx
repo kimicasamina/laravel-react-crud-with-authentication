@@ -1,27 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Outlet, Navigate } from "react-router-dom";
+import Header from "./Header";
 import { useStateContext } from "../context/contextProvider";
-
+import axiosClient from "../axiosClient";
 export default function DefaultLayout() {
-    const { user, token } = useStateContext();
+    const { user, setUser, token } = useStateContext();
 
     if (!token) {
         return <Navigate to="/login" />;
     }
+
+    useEffect(() => {
+        axiosClient.get("/user").then(({ data }) => {
+            setUser(data);
+        });
+    }, []);
+
     return (
         <div className="w-full h-screen ">
-            <header className="flex justify-between items-center">
-                <h1 className="">Logo</h1>
-                <h1 className="">{user.name} </h1>
-                <ul className="flex gap-x-2">
-                    <button className="btn border rounded-sm py-1 px-4 bg-purple-700 text-white hover:bg-white hover:border-purple-600 hover:text-purple-600 ">
-                        Login
-                    </button>
-                    <button className="btn border rounded-sm py-1 px-4 bg-purple-700 text-white hover:bg-white hover:border-purple-600 hover:text-purple-600 ">
-                        Logout
-                    </button>
-                </ul>
-            </header>
+            <Header />
             <Outlet />
         </div>
     );
